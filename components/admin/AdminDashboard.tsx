@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { AppConfig, StyledText, LeafletMetadata } from '../../types';
 import { gasService } from '../../services/gasService';
 import { DEFAULT_CONFIG } from '../../constants';
+import { mergeConfig } from '../../services/configMigration';
 import GeneralTab from './tabs/GeneralTab';
 import DesignTab from './tabs/DesignTab';
 import ProgramsTab from './tabs/ProgramsTab';
@@ -52,7 +53,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ config, onRefresh, onCl
   const handleEdit = async (metadata: LeafletMetadata) => {
     setIsSaving(true);
     try {
-      const fullConfig = await gasService.fetchConfig(metadata.id);
+      const rawConfig = await gasService.fetchConfig(metadata.id);
+      // 빈 객체 또는 불완전한 설정을 기본값과 병합
+      const fullConfig = mergeConfig(rawConfig && Object.keys(rawConfig).length > 0 ? rawConfig : {});
       setCurrentId(metadata.id);
       setOriginalId(metadata.id);
       setCurrentTitle(metadata.title);
@@ -69,10 +72,12 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ config, onRefresh, onCl
     if (!confirm(`'${metadata.title}' 리플렛을 복제하시겠습니까?`)) return;
     setIsSaving(true);
     try {
-      const targetConfig = await gasService.fetchConfig(metadata.id);
+      const rawConfig = await gasService.fetchConfig(metadata.id);
+      // 빈 객체 또는 불완전한 설정을 기본값과 병합
+      const targetConfig = mergeConfig(rawConfig && Object.keys(rawConfig).length > 0 ? rawConfig : {});
       const newId = `${metadata.id}_copy_${Math.floor(Date.now() / 1000)}`;
       const newTitle = `${metadata.title} (복사본)`;
-      
+
       const result = await gasService.saveLeaflet(newId, newTitle, targetConfig, true);
       
       if (result.success) {

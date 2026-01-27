@@ -10,12 +10,16 @@ interface AdTabProps {
 }
 
 const AdTab: React.FC<AdTabProps> = ({ config, onSetRoot }) => {
+  // 방어 코드: 중첩 객체가 undefined인 경우 기본값으로 대체
+  const adSettings = config?.adSettings || { ads: [], adDuration: 5, displayMode: 'random' as const };
+  const ads = adSettings.ads || [];
+
   const addAd = () => {
-    onSetRoot({ ...config, adSettings: { ...config.adSettings, ads: [...config.adSettings.ads, { id: `ad_${Date.now()}`, imageUrl: '', targetUrl: '' }] } });
+    onSetRoot({ ...config, adSettings: { ...adSettings, ads: [...ads, { id: `ad_${Date.now()}`, imageUrl: '', targetUrl: '' }] } });
   };
 
   const updateAd = (id: string, field: string, val: string) => {
-    onSetRoot({ ...config, adSettings: { ...config.adSettings, ads: config.adSettings.ads.map(a => a.id === id ? { ...a, [field]: val } : a) } });
+    onSetRoot({ ...config, adSettings: { ...adSettings, ads: ads.map(a => a.id === id ? { ...a, [field]: val } : a) } });
   };
 
   return (
@@ -29,7 +33,7 @@ const AdTab: React.FC<AdTabProps> = ({ config, onSetRoot }) => {
         <label className="block text-[10px] font-bold uppercase">노출 방식</label>
         <div className="flex bg-slate-100 p-1 rounded-md w-fit">
           {(['random', 'sequential'] as const).map(mode => (
-            <button key={mode} onClick={() => onSetRoot({ ...config, adSettings: { ...config.adSettings, displayMode: mode } })} className={`px-4 py-1 text-[10px] font-bold rounded ${config.adSettings.displayMode === mode ? 'bg-[#B0925A] text-black' : 'text-slate-400'}`}>
+            <button key={mode} onClick={() => onSetRoot({ ...config, adSettings: { ...adSettings, displayMode: mode } })} className={`px-4 py-1 text-[10px] font-bold rounded ${adSettings.displayMode === mode ? 'bg-[#B0925A] text-black' : 'text-slate-400'}`}>
               {mode === 'random' ? '랜덤' : '순차'}
             </button>
           ))}
@@ -38,12 +42,12 @@ const AdTab: React.FC<AdTabProps> = ({ config, onSetRoot }) => {
 
       <ImageGuide />
       <div className="grid md:grid-cols-2 gap-6">
-        {config.adSettings.ads.map((ad, idx) => (
+        {ads.map((ad, idx) => (
           <div key={ad.id} className="border rounded-lg bg-white overflow-hidden group relative p-4">
-            <button onClick={() => onSetRoot({ ...config, adSettings: { ...config.adSettings, ads: config.adSettings.ads.filter(a => a.id !== ad.id) } })} className="absolute top-2 right-2 text-red-500">✕</button>
-            <img src={getDirectImageUrl(ad.imageUrl)} className="w-full h-32 object-contain bg-slate-100 rounded mb-2" />
-            <input className="w-full text-[10px] border p-1 mb-2" placeholder="이미지 URL" value={ad.imageUrl} onChange={e => updateAd(ad.id, 'imageUrl', e.target.value)} />
-            <input className="w-full text-[10px] border p-1" placeholder="이동 링크" value={ad.targetUrl} onChange={e => updateAd(ad.id, 'targetUrl', e.target.value)} />
+            <button onClick={() => onSetRoot({ ...config, adSettings: { ...adSettings, ads: ads.filter(a => a.id !== ad.id) } })} className="absolute top-2 right-2 text-red-500">✕</button>
+            <img src={getDirectImageUrl(ad.imageUrl || '')} className="w-full h-32 object-contain bg-slate-100 rounded mb-2" />
+            <input className="w-full text-[10px] border p-1 mb-2" placeholder="이미지 URL" value={ad.imageUrl || ''} onChange={e => updateAd(ad.id, 'imageUrl', e.target.value)} />
+            <input className="w-full text-[10px] border p-1" placeholder="이동 링크" value={ad.targetUrl || ''} onChange={e => updateAd(ad.id, 'targetUrl', e.target.value)} />
             <SpecGuide spec="1064x742px" />
           </div>
         ))}

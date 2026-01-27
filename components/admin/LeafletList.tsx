@@ -22,11 +22,39 @@ const LeafletList: React.FC<LeafletListProps> = ({ leaflets, onEdit, onDelete, o
     window.location.href = link;
   };
 
-  const copyLink = (id: string) => {
+  const copyLink = async (id: string) => {
     const link = getShareLink(id);
-    navigator.clipboard.writeText(link).then(() => {
-      alert('공유 링크가 클립보드에 복사되었습니다.');
-    });
+
+    try {
+      // 최신 Clipboard API 시도 (HTTPS/localhost 필요)
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(link);
+        alert('공유 링크가 클립보드에 복사되었습니다.');
+      } else {
+        // Fallback: execCommand 사용 (deprecated but works in HTTP)
+        const textArea = document.createElement('textarea');
+        textArea.value = link;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        const success = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (success) {
+          alert('공유 링크가 클립보드에 복사되었습니다.');
+        } else {
+          // 복사 실패 시 링크 직접 표시
+          prompt('아래 링크를 복사하세요:', link);
+        }
+      }
+    } catch (err) {
+      console.error('클립보드 복사 실패:', err);
+      // 에러 발생 시 링크 직접 표시
+      prompt('아래 링크를 복사하세요:', link);
+    }
   };
 
   if (!Array.isArray(leaflets) || leaflets.length === 0) {

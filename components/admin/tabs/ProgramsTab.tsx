@@ -11,41 +11,45 @@ interface ProgramsTabProps {
 const ProgramsTab: React.FC<ProgramsTabProps> = ({ config, onSetRoot }) => {
   const generateId = (prefix: string) => `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
+  // 방어 코드: 중첩 객체가 undefined인 경우 빈 배열/객체로 대체
+  const programList = config?.programList || [];
+  const globalTheme = config?.globalTheme || {};
+
   const addSession = () => {
     const newSession: Program = {
       id: generateId('session'),
       defaultOpen: false,
-      sessionTag: { 
-        text: `SESSION ${config.programList.length + 1}`, 
-        fontFamily: 'Pretendard', 
-        isBold: true, 
-        fontSize: '0.7rem', 
-        letterSpacing: '4px', 
-        textAlign: 'left' 
+      sessionTag: {
+        text: `SESSION ${programList.length + 1}`,
+        fontFamily: 'Pretendard',
+        isBold: true,
+        fontSize: '0.7rem',
+        letterSpacing: '4px',
+        textAlign: 'left'
       },
-      sessionName: { 
-        text: '새 세션 제목을 입력하세요', 
-        fontFamily: 'Merriweather', 
-        isBold: false, 
-        fontSize: '1.3rem', 
-        color: '#FFFFFF', 
-        textAlign: 'left' 
+      sessionName: {
+        text: '새 세션 제목을 입력하세요',
+        fontFamily: 'Merriweather',
+        isBold: false,
+        fontSize: '1.3rem',
+        color: '#FFFFFF',
+        textAlign: 'left'
       },
       speakers: []
     };
-    onSetRoot({ ...config, programList: [...config.programList, newSession] });
+    onSetRoot({ ...config, programList: [...programList, newSession] });
   };
 
   const updateProgram = (id: string, field: string, value: any) => {
-    onSetRoot({ ...config, programList: config.programList.map(p => p.id === id ? { ...p, [field]: value } : p) });
+    onSetRoot({ ...config, programList: programList.map(p => p.id === id ? { ...p, [field]: value } : p) });
   };
 
   const updateSpeaker = (pId: string, sId: string, field: string, value: any) => {
-    onSetRoot({ ...config, programList: config.programList.map(p => p.id === pId ? { ...p, speakers: p.speakers.map(s => s.id === sId ? { ...s, [field]: value } : s) } : p) });
+    onSetRoot({ ...config, programList: programList.map(p => p.id === pId ? { ...p, speakers: (p.speakers || []).map(s => s.id === sId ? { ...s, [field]: value } : s) } : p) });
   };
 
   const moveProgram = (index: number, direction: 'up' | 'down') => {
-    const newList = [...config.programList];
+    const newList = [...programList];
     const target = direction === 'up' ? index - 1 : index + 1;
     if (target < 0 || target >= newList.length) return;
     [newList[index], newList[target]] = [newList[target], newList[index]];
@@ -55,32 +59,32 @@ const ProgramsTab: React.FC<ProgramsTabProps> = ({ config, onSetRoot }) => {
   const addSpeaker = (pId: string) => {
     const newSpeaker: Speaker = {
       id: generateId('sp'),
-      time: { 
-        text: '00:00 - 00:00', 
-        fontFamily: 'Merriweather', 
-        isBold: true, 
-        fontSize: '0.75rem', 
+      time: {
+        text: '00:00 - 00:00',
+        fontFamily: 'Merriweather',
+        isBold: true,
+        fontSize: '0.75rem',
         letterSpacing: '0px'
       },
-      name: { 
-        text: '성함 직책 (소속)', 
-        fontFamily: 'Pretendard', 
-        fontSize: '0.85rem', 
-        color: config.globalTheme.textColor,
+      name: {
+        text: '성함 직책 (소속)',
+        fontFamily: 'Pretendard',
+        fontSize: '0.85rem',
+        color: globalTheme.textColor || '#8E8E8E',
         letterSpacing: '0px'
       },
-      org: { 
-        text: '발표 주제를 입력하세요', 
-        fontFamily: 'Pretendard', 
-        fontSize: '1.15rem', 
+      org: {
+        text: '발표 주제를 입력하세요',
+        fontFamily: 'Pretendard',
+        fontSize: '1.15rem',
         color: '#FFFFFF',
         letterSpacing: '0px'
       },
-      photoUrl: '', 
-      detailUrl: '', 
+      photoUrl: '',
+      detailUrl: '',
       showDetail: true
     };
-    onSetRoot({ ...config, programList: config.programList.map(p => p.id === pId ? { ...p, speakers: [...p.speakers, newSpeaker] } : p) });
+    onSetRoot({ ...config, programList: programList.map(p => p.id === pId ? { ...p, speakers: [...(p.speakers || []), newSpeaker] } : p) });
   };
 
   return (
@@ -91,17 +95,17 @@ const ProgramsTab: React.FC<ProgramsTabProps> = ({ config, onSetRoot }) => {
       </div>
       <ImageGuide />
       <div className="space-y-12">
-        {config.programList.map((p, idx) => (
+        {programList.map((p, idx) => (
           <div key={p.id} className="border-t-4 border-[#B0925A] p-6 rounded-lg bg-white shadow-xl relative animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-4">
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">SESSION {idx + 1}</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <input 
-                      type="checkbox" 
-                      id={`defaultOpen-${p.id}`} 
-                      checked={p.defaultOpen || false} 
+                    <input
+                      type="checkbox"
+                      id={`defaultOpen-${p.id}`}
+                      checked={p.defaultOpen || false}
                       onChange={e => updateProgram(p.id, 'defaultOpen', e.target.checked)}
                       className="w-3 h-3 accent-[#B0925A]"
                     />
@@ -110,10 +114,10 @@ const ProgramsTab: React.FC<ProgramsTabProps> = ({ config, onSetRoot }) => {
                 </div>
                 <div className="flex items-center gap-1">
                   <button onClick={() => moveProgram(idx, 'up')} disabled={idx === 0} className="w-6 h-6 border rounded hover:bg-slate-50 disabled:opacity-20 transition-all">▲</button>
-                  <button onClick={() => moveProgram(idx, 'down')} disabled={idx === config.programList.length - 1} className="w-6 h-6 border rounded hover:bg-slate-50 disabled:opacity-20 transition-all">▼</button>
+                  <button onClick={() => moveProgram(idx, 'down')} disabled={idx === programList.length - 1} className="w-6 h-6 border rounded hover:bg-slate-50 disabled:opacity-20 transition-all">▼</button>
                 </div>
               </div>
-              <button onClick={() => onSetRoot({ ...config, programList: config.programList.filter(item => item.id !== p.id) })} className="text-red-400 text-[10px] font-bold uppercase hover:underline">삭제</button>
+              <button onClick={() => onSetRoot({ ...config, programList: programList.filter(item => item.id !== p.id) })} className="text-red-400 text-[10px] font-bold uppercase hover:underline">삭제</button>
             </div>
             <div className="space-y-4">
               <RichTextEditor label="세션 태그" value={p.sessionTag} onChange={v => updateProgram(p.id, 'sessionTag', v)} />
@@ -124,9 +128,9 @@ const ProgramsTab: React.FC<ProgramsTabProps> = ({ config, onSetRoot }) => {
                   <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">연사 리스트</h4>
                   <button onClick={() => addSpeaker(p.id)} className="text-[#B0925A] text-[10px] font-bold uppercase hover:underline">+ 연사 추가</button>
                </div>
-               {p.speakers.map(s => (
+               {(p.speakers || []).map(s => (
                  <div key={s.id} className="bg-slate-50 p-4 rounded border border-slate-200 space-y-4 relative group">
-                    <button onClick={() => updateProgram(p.id, 'speakers', p.speakers.filter(sp => sp.id !== s.id))} className="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors">✕</button>
+                    <button onClick={() => updateProgram(p.id, 'speakers', (p.speakers || []).filter(sp => sp.id !== s.id))} className="absolute top-2 right-2 text-slate-300 hover:text-red-500 transition-colors">✕</button>
                     <RichTextEditor label="발표 시간" value={s.time} onChange={v => updateSpeaker(p.id, s.id, 'time', v)} />
                     <RichTextEditor label="연사 정보 (성함 직책 소속)" value={s.name} onChange={v => updateSpeaker(p.id, s.id, 'name', v)} />
                     <RichTextEditor label="발표 주제" value={s.org} onChange={v => updateSpeaker(p.id, s.id, 'org', v)} />

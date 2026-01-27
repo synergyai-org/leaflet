@@ -126,8 +126,10 @@ export const RichTextEditor: React.FC<{
   onChange: (newValue: StyledText) => void;
   multiline?: boolean;
 }> = ({ label, value, onChange, multiline = false }) => {
+  const safeValue: StyledText = value || { text: "" };
+
   const update = (field: keyof StyledText, val: any) =>
-    onChange({ ...value, [field]: val });
+    onChange({ ...safeValue, [field]: val });
 
   const handleUnitInput = (
     field: keyof StyledText,
@@ -152,7 +154,7 @@ export const RichTextEditor: React.FC<{
           <input
             type="checkbox"
             id={`fluid-${label}`}
-            checked={!!value?.isFluid}
+            checked={!!safeValue.isFluid}
             onChange={(e) => update("isFluid", e.target.checked)}
             className="w-3 h-3 accent-indigo-600"
           />
@@ -168,13 +170,13 @@ export const RichTextEditor: React.FC<{
       {multiline ? (
         <textarea
           className="w-full border border-slate-200 rounded-md p-3 h-24 text-sm font-sans focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
-          value={value.text}
+          value={safeValue.text || ""}
           onChange={(e) => update("text", e.target.value)}
         />
       ) : (
         <input
           className="w-full border border-slate-200 rounded-md p-3 text-sm focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
-          value={value?.text}
+          value={safeValue.text || ""}
           onChange={(e) => update("text", e.target.value)}
         />
       )}
@@ -191,9 +193,9 @@ export const RichTextEditor: React.FC<{
               key={f.key}
               type="button"
               title={f.title}
-              onClick={() => update(f.key as any, !(value as any)[f.key])}
+              onClick={() => update(f.key as any, !(safeValue as any)[f.key])}
               className={`w-8 h-8 flex items-center justify-center rounded transition-all text-xs font-bold ${
-                (value as any)[f.key]
+                (safeValue as any)[f.key]
                   ? "bg-slate-800 text-white shadow-md"
                   : "bg-white text-slate-400 hover:text-slate-600 border border-slate-200"
               }`}
@@ -211,7 +213,7 @@ export const RichTextEditor: React.FC<{
               type="button"
               onClick={() => update("textAlign", align)}
               className={`w-8 h-8 flex items-center justify-center rounded transition-all text-[10px] font-bold ${
-                value.textAlign === align
+                safeValue.textAlign === align
                   ? "bg-slate-800 text-white shadow-md"
                   : "bg-white text-slate-400 hover:text-slate-600 border border-slate-200"
               }`}
@@ -226,7 +228,7 @@ export const RichTextEditor: React.FC<{
           <input
             type="color"
             className="w-10 h-10 p-0.5 border border-slate-200 rounded-md cursor-pointer bg-white overflow-hidden"
-            value={value.color || "#000000"}
+            value={safeValue.color || "#000000"}
             onChange={(e) => update("color", e.target.value)}
           />
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 hidden group-hover:block whitespace-nowrap bg-slate-800 text-white text-[9px] px-2 py-1 rounded">
@@ -243,7 +245,7 @@ export const RichTextEditor: React.FC<{
           </label>
           <select
             className="w-full border border-slate-200 rounded-md px-3 py-2 text-xs bg-slate-50 focus:border-indigo-500 outline-none"
-            value={value.fontFamily || ""}
+            value={safeValue.fontFamily || ""}
             onChange={(e) => update("fontFamily", e.target.value)}
           >
             <option value="">글꼴 선택</option>
@@ -264,8 +266,8 @@ export const RichTextEditor: React.FC<{
             <select
               className="flex-1 border border-slate-200 rounded-md px-2 py-2 text-xs bg-slate-50 focus:border-indigo-500 outline-none"
               value={
-                FONT_SIZE_OPTIONS.includes(value.fontSize || "")
-                  ? value.fontSize
+                FONT_SIZE_OPTIONS.includes(safeValue.fontSize || "")
+                  ? safeValue.fontSize
                   : "custom"
               }
               onChange={(e) =>
@@ -284,7 +286,7 @@ export const RichTextEditor: React.FC<{
               type="text"
               placeholder="예: 1.5rem"
               className="w-24 border border-slate-200 rounded-md px-3 py-2 text-xs focus:border-indigo-500 outline-none"
-              value={value.fontSize || ""}
+              value={safeValue.fontSize || ""}
               onChange={(e) => update("fontSize", e.target.value)}
               onBlur={(e) => handleUnitInput("fontSize", e.target.value, "rem")}
             />
@@ -300,8 +302,8 @@ export const RichTextEditor: React.FC<{
             <select
               className="flex-1 border border-slate-200 rounded-md px-2 py-2 text-xs bg-slate-50 focus:border-indigo-500 outline-none"
               value={
-                LETTER_SPACING_OPTIONS.includes(value.letterSpacing || "")
-                  ? value.letterSpacing
+                LETTER_SPACING_OPTIONS.includes(safeValue.letterSpacing || "")
+                  ? safeValue.letterSpacing
                   : "custom"
               }
               onChange={(e) =>
@@ -320,7 +322,7 @@ export const RichTextEditor: React.FC<{
               type="text"
               placeholder="예: 2px"
               className="w-24 border border-slate-200 rounded-md px-3 py-2 text-xs focus:border-indigo-500 outline-none"
-              value={value.letterSpacing || ""}
+              value={safeValue.letterSpacing || ""}
               onChange={(e) => update("letterSpacing", e.target.value)}
               onBlur={(e) =>
                 handleUnitInput("letterSpacing", e.target.value, "px")
