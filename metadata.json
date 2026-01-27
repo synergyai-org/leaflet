@@ -1,0 +1,5 @@
+{
+  "name": "Academic Digital Leaflet & CMS",
+  "description": "A universal digital leaflet for academic conferences with a built-in CMS using Google Sheets as a backend. Features include real-time theme customization, program management, and an advertisement-gated detail view.",
+  "requestFramePermissions": []
+}
