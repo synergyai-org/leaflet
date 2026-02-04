@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { AppConfig, Speaker } from "./types";
 import { DEFAULT_CONFIG } from "./constants";
-import { loadConfigFromHospitalByDocumentId } from "./services/strapiService";
+import { loadConfigFromHospitalByCode } from "./services/strapiService";
 import { getDirectImageUrl } from "./utils/urlHelper";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
@@ -54,9 +54,9 @@ const App: React.FC = () => {
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setLoading(true);
     try {
-      const documentId = "t5askisw5isfgswgfl9gtra7"; // 계명대동산병원
+      const hospitalCode = "dsmc-dongsan"; // TODO 임시코드
 
-      const strapiConfig = await loadConfigFromHospitalByDocumentId(documentId);
+      const strapiConfig = await loadConfigFromHospitalByCode(hospitalCode);
       setConfig(strapiConfig);
 
       console.log("✅ Successfully loaded hospital data:", strapiConfig);
