@@ -87,6 +87,7 @@ export interface AppConfig {
   adSettings: AdSettings;
   footer: Footer;
   programTitle: StyledText;
+  pageTitle?: string;
 }
 
 // 멀티 리플렛 관리를 위한 타입

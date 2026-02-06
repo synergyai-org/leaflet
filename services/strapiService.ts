@@ -98,6 +98,7 @@ export type Hospital = {
   id: number;
   documentId?: string;
   name: string;
+  pageTitle?: string;
   subtitle?: TextComponent;
   mainTitle?: TextComponent;
   mainSubtitle?: TextComponent;
