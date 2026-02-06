@@ -1,4 +1,3 @@
-
 export interface StyledText {
   text: string;
   color?: string;
@@ -8,7 +7,7 @@ export interface StyledText {
   fontSize?: string;
   fontFamily?: string;
   letterSpacing?: string;
-  textAlign?: 'left' | 'center' | 'right';
+  textAlign?: "left" | "center" | "right";
   isFluid?: boolean;
 }
 
@@ -70,7 +69,7 @@ export interface AdItem {
 export interface AdSettings {
   ads: AdItem[];
   adDuration: number;
-  displayMode: 'random' | 'sequential';
+  displayMode: "random" | "sequential";
 }
 
 export interface Footer {
@@ -88,6 +87,7 @@ export interface AppConfig {
   footer: Footer;
   programTitle: StyledText;
   pageTitle?: string;
+  domain?: string;
 }
 
 // 멀티 리플렛 관리를 위한 타입
