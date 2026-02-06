@@ -1,7 +1,4 @@
-const STRAPI_BASE_URL =
-  process.env.NODE_ENV === "development"
-    ? ""
-    : process.env.STRAPI_API_URL || "http://localhost:1337";
+const STRAPI_BASE_URL = process.env.STRAPI_API_URL || "http://localhost:1337";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
 export type TextComponent = {
@@ -113,6 +110,7 @@ export type Hospital = {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
+  domain: string;
 };
 
 export type StrapiProgram = {
@@ -185,25 +183,26 @@ class StrapiService {
     return this.fetchFromStrapi(`/hospitals?${params.toString()}`);
   }
 
-  async getCompleteHospitalDataByCode(
-    code: string,
-  ): Promise<{ data: Hospital; meta: any }> {
+  async getCompleteHospitalDataByCode(code: string): Promise<Hospital> {
     try {
-      // const response = await this.fetchFromStrapi<{
-      //   data: Hospital;
-      //   meta: any;
-      // }>(`hospitals?filters[name_eng]=${code}&populate=*`);
+      const endpoint = `/hospitals?filters[domain]=${code}&populate=*`;
 
       const response = await this.fetchFromStrapi<{
-        data: Hospital;
+        data: Hospital[];
         meta: any;
-      }>(`/hospitals?populate=*`);
+      }>(endpoint);
+
+      if (!response.data || response.data.length === 0) {
+        throw new Error(`No hospital found for code: ${code}`);
+      }
 
       return response.data[0];
     } catch (error) {
-      console.warn(
-        "❌ Failed to fetch hospital data with relations, falling back to basic populate=*",
+      console.error(
+        `❌ Failed to fetch hospital data for code "${code}":`,
+        error,
       );
+      throw error;
     }
   }
 
@@ -224,10 +223,9 @@ export async function loadConfigFromHospitalByCode(
   const { DEFAULT_CONFIG } = await import("../constants");
 
   try {
-    const completeData =
+    const hospitalData =
       await strapiService.getCompleteHospitalDataByCode(code);
-
-    return createConfigFromHospitalData(completeData);
+    return createConfigFromHospitalData(hospitalData);
   } catch (error) {
     console.error("Failed to load config from hospital data:", error);
     console.warn("Falling back to DEFAULT_CONFIG");

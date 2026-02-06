@@ -1,6 +1,6 @@
 import { AppConfig } from "./types";
 
-export const API_URL = "http://localhost:1337";
+export const API_URL = process.env.STRAPI_API_URL || "http://localhost:1337";
 
 export const DEFAULT_CONFIG: AppConfig = {
   globalTheme: {
@@ -13,15 +13,15 @@ export const DEFAULT_CONFIG: AppConfig = {
     fontName: "Pretendard",
   },
   logos: {
-    leftLogo: "images/logo_left.png",
-    leftLink: "https://www.catholic.ac.kr/",
-    rightLogo: "images/logo_right.png",
+    leftLogo: "",
+    leftLink: "",
+    rightLogo: "",
     rightLink: "",
     applyFilter: true,
   },
   heroSection: {
     title: {
-      text: "데이터 로딩 중...",
+      text: "Loading",
       color: "#FFFFFF",
       isBold: true,
       isItalic: true,

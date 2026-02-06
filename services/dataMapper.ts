@@ -121,6 +121,9 @@ export class DataMapper {
       if (hospitalData.pageTitle) {
         config.pageTitle = hospitalData.pageTitle;
       }
+      if (hospitalData.domain) {
+        config.domain = hospitalData.domain;
+      }
     }
 
     if (hospitalData.theme) {

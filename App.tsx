@@ -21,6 +21,18 @@ const App: React.FC = () => {
   const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
   const [showAd, setShowAd] = useState(false);
 
+  const getHospitalCodeFromUrl = (): string => {
+    const hostname = window.location.hostname;
+
+    if (hostname === "localhost") {
+      return "leaflet";
+    }
+
+    // subdomain 추출 (cmcseoul.synergyai.co -> cmcseoul)
+    const subdomain = hostname.split(".")[0];
+    return subdomain;
+  };
+
   useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => setToast(null), 3000);
@@ -58,7 +70,7 @@ const App: React.FC = () => {
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setLoading(true);
     try {
-      const hospitalCode = "dsmc-dongsan"; // TODO 임시코드
+      const hospitalCode = getHospitalCodeFromUrl();
 
       const strapiConfig = await loadConfigFromHospitalByCode(hospitalCode);
       setConfig(strapiConfig);
@@ -67,8 +79,14 @@ const App: React.FC = () => {
     } catch (error) {
       console.error("❌ Failed to load hospital data:", error);
       setConfig(DEFAULT_CONFIG);
+
+      const hospitalCode = getHospitalCodeFromUrl();
+      const isDefaultCode = hospitalCode === "leaflet";
+
       setToast({
-        message: "데이터 로딩에 실패했습니다. 기본 설정을 사용합니다.",
+        message: isDefaultCode
+          ? "데이터 로딩에 실패했습니다. 기본 설정을 사용합니다."
+          : `병원 코드 '${hospitalCode}'를 찾을 수 없습니다. 기본 설정을 사용합니다.`,
         type: "error",
       });
     } finally {
@@ -78,8 +96,18 @@ const App: React.FC = () => {
 
   useEffect(() => {
     loadData();
-    // 브라우저 뒤로가기 등 대응
-    window.onpopstate = () => loadData();
+
+    // URL 변경 시 데이터 다시 로드 (브라우저 뒤로가기, 앞으로가기 등)
+    const handlePopState = () => {
+      console.log("🔄 URL changed, reloading data...");
+      loadData();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
   }, [loadData]);
 
   const handleSpeakerClick = (speaker: Speaker) => {
@@ -87,6 +115,18 @@ const App: React.FC = () => {
     setSelectedSpeaker(speaker);
     setShowAd(true);
   };
+
+  if (config.heroSection.title.text === "Loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="leading-[1.1] hero-title-gradient drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)] text-[24px]">
+            Loading...
+          </h1>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

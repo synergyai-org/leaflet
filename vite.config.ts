@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
         host: '0.0.0.0',
         proxy: {
           '/api': {
-            target: 'http://localhost:1337',
+            target: env.STRAPI_API_URL || 'http://localhost:1337',
             changeOrigin: true,
             secure: false,
           },
