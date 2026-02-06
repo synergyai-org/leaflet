@@ -117,6 +117,10 @@ export class DataMapper {
       if (hospitalData.programTitle) {
         config.programTitle = this.mapTextComponent(hospitalData.programTitle);
       }
+
+      if (hospitalData.pageTitle) {
+        config.pageTitle = hospitalData.pageTitle;
+      }
     }
 
     if (hospitalData.theme) {

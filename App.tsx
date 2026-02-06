@@ -38,6 +38,10 @@ const App: React.FC = () => {
     root.style.setProperty("--border-color", accent + "40");
     root.style.setProperty("--glow-color", accent + "33");
 
+    if (config.pageTitle) {
+      document.title = config.pageTitle;
+    }
+
     if (config.globalTheme.fontUrl) {
       const link = document.createElement("link");
       link.href = config.globalTheme.fontUrl;
@@ -49,7 +53,7 @@ const App: React.FC = () => {
         } catch (e) {}
       };
     }
-  }, [config.globalTheme]);
+  }, [config.globalTheme, config.pageTitle]);
 
   const loadData = useCallback(async (isSilent = false) => {
     if (!isSilent) setLoading(true);
