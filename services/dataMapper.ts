@@ -11,12 +11,14 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
         color: sessionData.tag?.color || '#d7b9b9',
         fontSize: sessionData.tag?.fontSize || '1rem',
         fontFamily: sessionData.tag?.font || 'Roboto',
+        letterSpacing: `${sessionData.tag?.letterSpacing || 0}px`,
       },
       sessionName: {
         text: sessionData.title?.text || '',
         color: sessionData.title?.color || '#edd1d1',
         fontSize: sessionData.title?.fontSize || '1rem',
         fontFamily: sessionData.title?.font || null,
+        letterSpacing: `${sessionData.title?.letterSpacing || 0}px`,
       },
       speakers:
         sessionData.speaker?.map((speakerData: any) => ({
@@ -26,18 +28,21 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
             color: speakerData.time?.color || '#95bca1',
             fontSize: speakerData.time?.fontSize || '1rem',
             fontFamily: speakerData.time?.font || 'Roboto',
+            letterSpacing: `${sessionData.time?.letterSpacing || 0}px`,
           },
           name: {
             text: speakerData.profile?.text || '',
             color: speakerData.profile?.color || '#c9d7ce',
             fontSize: speakerData.profile?.fontSize || '1rem',
             fontFamily: speakerData.profile?.font || null,
+            letterSpacing: `${sessionData.profile?.letterSpacing || 0}px`,
           },
           org: {
             text: speakerData.subject?.text || '',
             color: speakerData.subject?.color || '#c4d6cd',
             fontSize: speakerData.subject?.fontSize || '1rem',
             fontFamily: speakerData.subject?.font || null,
+            letterSpacing: `${sessionData.subject?.letterSpacing || 0}px`,
           },
           photoUrl: speakerData.picture?.url
             ? `${API_URL}${speakerData.picture.url}`
@@ -71,6 +76,7 @@ export class DataMapper {
       textAlign: textComponent.align
         ? (textComponent.align.toLowerCase() as 'left' | 'center' | 'right')
         : undefined,
+      letterSpacing: `${textComponent.letterSpacing || 0}px`,
     };
     return mapped;
   }

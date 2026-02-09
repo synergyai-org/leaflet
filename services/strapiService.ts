@@ -8,6 +8,7 @@ export type TextComponent = {
   color: string;
   font: string;
   fontSize: string;
+  letterSpacing: number;
 };
 
 export type SpeakerComponent = {
