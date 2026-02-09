@@ -50,7 +50,7 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
           detailUrl: speakerData.detailUrl || '',
           showDetail: speakerData.detail || false,
         })) || [],
-      defaultOpen: sessionIndex === 0,
+      defaultOpen: !!sessionData.defaultOpen,
     }))
     .filter(Boolean);
 }
