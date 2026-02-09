@@ -1,4 +1,5 @@
 import React from 'react';
+import sanitizeHtml from 'sanitize-html';
 
 import { StyledText } from '../../types';
 
@@ -88,9 +89,16 @@ const RenderStyled: React.FC<RenderStyledProps> = ({
   };
 
   return (
-    <span style={styles} className={className}>
-      {data.text}
-    </span>
+    <span
+      style={styles}
+      className={className}
+      dangerouslySetInnerHTML={{
+        __html: sanitizeHtml(data.text, {
+          allowedTags: ['b', 'i', 'u', 'br', 'div'],
+          allowedAttributes: {},
+        }),
+      }}
+    ></span>
   );
 };
 
