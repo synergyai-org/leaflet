@@ -1,6 +1,6 @@
-import { AppConfig, StyledText, HeroSection, Program, Speaker } from "../types";
-import { TextComponent, SpeakerComponent, Hospital } from "./strapiService";
-import { DEFAULT_CONFIG, API_URL } from "../constants";
+import { API_URL, DEFAULT_CONFIG } from '../constants';
+import { AppConfig, HeroSection, Program, Speaker, StyledText } from '../types';
+import { Hospital, SpeakerComponent, TextComponent } from './strapiService';
 
 function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
   return strapiProgram.session
@@ -8,41 +8,41 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
       id: `program_${strapiProgram.id}_session_${sessionData.id}`,
       sessionTag: {
         text: sessionData.tag?.text || `SESSION ${sessionIndex + 1}`,
-        color: sessionData.tag?.color || "#d7b9b9",
-        fontSize: sessionData.tag?.fontSize || "1rem",
-        fontFamily: sessionData.tag?.font || "Roboto",
+        color: sessionData.tag?.color || '#d7b9b9',
+        fontSize: sessionData.tag?.fontSize || '1rem',
+        fontFamily: sessionData.tag?.font || 'Roboto',
       },
       sessionName: {
-        text: sessionData.title?.text || "",
-        color: sessionData.title?.color || "#edd1d1",
-        fontSize: sessionData.title?.fontSize || "1rem",
+        text: sessionData.title?.text || '',
+        color: sessionData.title?.color || '#edd1d1',
+        fontSize: sessionData.title?.fontSize || '1rem',
         fontFamily: sessionData.title?.font || null,
       },
       speakers:
         sessionData.speaker?.map((speakerData: any) => ({
           id: `speaker_${strapiProgram.id}_${sessionData.id}_${speakerData.id}`,
           time: {
-            text: speakerData.time?.text || "",
-            color: speakerData.time?.color || "#95bca1",
-            fontSize: speakerData.time?.fontSize || "1rem",
-            fontFamily: speakerData.time?.font || "Roboto",
+            text: speakerData.time?.text || '',
+            color: speakerData.time?.color || '#95bca1',
+            fontSize: speakerData.time?.fontSize || '1rem',
+            fontFamily: speakerData.time?.font || 'Roboto',
           },
           name: {
-            text: speakerData.profile?.text || "",
-            color: speakerData.profile?.color || "#c9d7ce",
-            fontSize: speakerData.profile?.fontSize || "1rem",
+            text: speakerData.profile?.text || '',
+            color: speakerData.profile?.color || '#c9d7ce',
+            fontSize: speakerData.profile?.fontSize || '1rem',
             fontFamily: speakerData.profile?.font || null,
           },
           org: {
-            text: speakerData.subject?.text || "",
-            color: speakerData.subject?.color || "#c4d6cd",
-            fontSize: speakerData.subject?.fontSize || "1rem",
+            text: speakerData.subject?.text || '',
+            color: speakerData.subject?.color || '#c4d6cd',
+            fontSize: speakerData.subject?.fontSize || '1rem',
             fontFamily: speakerData.subject?.font || null,
           },
           photoUrl: speakerData.picture?.url
             ? `${API_URL}${speakerData.picture.url}`
-            : "",
-          detailUrl: speakerData.detailUrl || "",
+            : '',
+          detailUrl: speakerData.detailUrl || '',
           showDetail: speakerData.detail || false,
         })) || [],
       defaultOpen: sessionIndex === 0,
@@ -56,20 +56,20 @@ export class DataMapper {
   ): StyledText {
     if (!textComponent) {
       return {
-        text: "",
-        color: "#000000",
-        fontSize: "14px",
-        fontFamily: "Arial",
+        text: '',
+        color: '#000000',
+        fontSize: '14px',
+        fontFamily: 'Arial',
       };
     }
 
     const mapped = {
-      text: textComponent.text || "",
-      color: textComponent.color || "#000000",
-      fontSize: textComponent.fontSize || "14px",
-      fontFamily: textComponent.font || "Arial",
+      text: textComponent.text || '',
+      color: textComponent.color || '#000000',
+      fontSize: textComponent.fontSize || '14px',
+      fontFamily: textComponent.font || 'Arial',
       textAlign: textComponent.align
-        ? (textComponent.align.toLowerCase() as "left" | "center" | "right")
+        ? (textComponent.align.toLowerCase() as 'left' | 'center' | 'right')
         : undefined,
     };
     return mapped;
@@ -106,8 +106,8 @@ export class DataMapper {
       config.heroSection = this.mapHospitalToHeroSection(hospitalData);
 
       const footerMappings = [
-        { src: hospitalData.footerText, target: "text" },
-        { src: hospitalData.footerCopyright, target: "copyright" },
+        { src: hospitalData.footerText, target: 'text' },
+        { src: hospitalData.footerCopyright, target: 'copyright' },
       ] as const;
 
       footerMappings.forEach(({ src, target }) => {
@@ -155,24 +155,24 @@ export class DataMapper {
 
     if (Object.keys(logos).length > 0) {
       config.logos = {
-        leftLogo: logos.leftLogo?.url ? `${API_URL}${logos.leftLogo.url}` : "",
-        leftLink: logos.leftLink || "",
+        leftLogo: logos.leftLogo?.url ? `${API_URL}${logos.leftLogo.url}` : '',
+        leftLink: logos.leftLink || '',
         rightLogo: logos.rightLogo?.url
           ? `${API_URL}${logos.rightLogo.url}`
-          : "",
-        rightLink: logos.rightLink || "",
+          : '',
+        rightLink: logos.rightLink || '',
         applyFilter: logos.applyFilter !== undefined ? logos.applyFilter : true,
       };
     }
 
-    if (backgrounds && typeof backgrounds === "string") {
+    if (backgrounds && typeof backgrounds === 'string') {
       try {
         const parsedBackgrounds = JSON.parse(backgrounds);
         const getImageUrl = (imageSrc: string) => {
-          if (!imageSrc) return "";
+          if (!imageSrc) return '';
           if (
-            imageSrc.startsWith("http://") ||
-            imageSrc.startsWith("https://")
+            imageSrc.startsWith('http://') ||
+            imageSrc.startsWith('https://')
           ) {
             return imageSrc;
           }
@@ -186,30 +186,30 @@ export class DataMapper {
           programBg: getImageUrl(parsedBackgrounds.imageSrc),
         };
       } catch (error) {
-        console.error("Error parsing backgrounds JSON:", error);
+        console.error('Error parsing backgrounds JSON:', error);
       }
     } else if (backgrounds && Object.keys(backgrounds).length > 0) {
       config.backgrounds = {
         heroBg: backgrounds.heroBg?.url
           ? `${API_URL}${backgrounds.heroBg.url}`
-          : "",
+          : '',
         heroBgBrightness: backgrounds.heroBgBrightness ?? 0.25,
         heroBgContrast: backgrounds.heroBgContrast ?? 1.15,
         programBg: backgrounds.programBg?.url
           ? `${API_URL}${backgrounds.programBg.url}`
-          : "",
+          : '',
       };
     }
   }
 
   private static mapAdData(adData: any, config: AppConfig): void {
-    const { ads = [], adDuration = 5, displayMode = "random" } = adData;
+    const { ads = [], adDuration = 5, displayMode = 'random' } = adData;
 
     config.adSettings = {
       ads: ads.map((ad: any) => ({
-        id: ad.id?.toString() || "",
-        imageUrl: ad.image?.url ? `${API_URL}${ad.image.url}` : "",
-        targetUrl: ad.targetUrl || "",
+        id: ad.id?.toString() || '',
+        imageUrl: ad.image?.url ? `${API_URL}${ad.image.url}` : '',
+        targetUrl: ad.targetUrl || '',
       })),
       adDuration,
       displayMode,

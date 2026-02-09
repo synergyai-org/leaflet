@@ -1,10 +1,10 @@
-const STRAPI_BASE_URL = process.env.STRAPI_API_URL || "http://localhost:1337";
+const STRAPI_BASE_URL = process.env.STRAPI_API_URL || 'http://localhost:1337';
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
 export type TextComponent = {
   id: number;
   text: string;
-  align: "Left" | "Center" | "Right";
+  align: 'Left' | 'Center' | 'Right';
   color: string;
   font: string;
   fontSize: string;
@@ -133,11 +133,11 @@ class StrapiService {
 
   private getHeaders(): HeadersInit {
     const headers: HeadersInit = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     };
 
     if (this.apiKey) {
-      headers["Authorization"] = `Bearer ${this.apiKey}`;
+      headers['Authorization'] = `Bearer ${this.apiKey}`;
     }
 
     return headers;
@@ -146,7 +146,7 @@ class StrapiService {
   private async fetchFromStrapi<T>(endpoint: string): Promise<T> {
     try {
       const response = await fetch(`${this.baseUrl}/api${endpoint}`, {
-        method: "GET",
+        method: 'GET',
         headers: this.getHeaders(),
       });
 
@@ -168,16 +168,16 @@ class StrapiService {
     sort?: string;
   }): Promise<{ data: Hospital[]; meta: any }> {
     const params = new URLSearchParams();
-    params.append("populate", "*");
+    params.append('populate', '*');
 
     if (options?.page) {
-      params.append("page", options.page.toString());
+      params.append('page', options.page.toString());
     }
     if (options?.pageSize) {
-      params.append("pageSize", options.pageSize.toString());
+      params.append('pageSize', options.pageSize.toString());
     }
     if (options?.sort) {
-      params.append("sort", options.sort);
+      params.append('sort', options.sort);
     }
 
     return this.fetchFromStrapi(`/hospitals?${params.toString()}`);
@@ -218,17 +218,17 @@ export const strapiService = new StrapiService(
 
 export async function loadConfigFromHospitalByCode(
   code: string,
-): Promise<import("../types").AppConfig> {
-  const { createConfigFromHospitalData } = await import("./dataMapper");
-  const { DEFAULT_CONFIG } = await import("../constants");
+): Promise<import('../types').AppConfig> {
+  const { createConfigFromHospitalData } = await import('./dataMapper');
+  const { DEFAULT_CONFIG } = await import('../constants');
 
   try {
     const hospitalData =
       await strapiService.getCompleteHospitalDataByCode(code);
     return createConfigFromHospitalData(hospitalData);
   } catch (error) {
-    console.error("Failed to load config from hospital data:", error);
-    console.warn("Falling back to DEFAULT_CONFIG");
+    console.error('Failed to load config from hospital data:', error);
+    console.warn('Falling back to DEFAULT_CONFIG');
     return DEFAULT_CONFIG;
   }
 }
