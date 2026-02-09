@@ -11,6 +11,9 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
         color: sessionData.tag?.color || '#d7b9b9',
         fontSize: sessionData.tag?.fontSize || '1rem',
         fontFamily: sessionData.tag?.font || 'Roboto',
+        textAlign: sessionData.tag?.align
+          ? sessionData.tag?.align.toLowerCase()
+          : 'left',
         letterSpacing: `${sessionData.tag?.letterSpacing || 0}px`,
       },
       sessionName: {
@@ -18,6 +21,9 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
         color: sessionData.title?.color || '#edd1d1',
         fontSize: sessionData.title?.fontSize || '1rem',
         fontFamily: sessionData.title?.font || null,
+        textAlign: sessionData.title?.align
+          ? sessionData.title?.align.toLowerCase()
+          : 'left',
         letterSpacing: `${sessionData.title?.letterSpacing || 0}px`,
       },
       speakers:
@@ -28,6 +34,9 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
             color: speakerData.time?.color || '#95bca1',
             fontSize: speakerData.time?.fontSize || '1rem',
             fontFamily: speakerData.time?.font || 'Roboto',
+            textAlign: speakerData.time?.align
+              ? speakerData.time?.align.toLowerCase()
+              : 'left',
             letterSpacing: `${sessionData.time?.letterSpacing || 0}px`,
           },
           name: {
@@ -35,6 +44,9 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
             color: speakerData.profile?.color || '#c9d7ce',
             fontSize: speakerData.profile?.fontSize || '1rem',
             fontFamily: speakerData.profile?.font || null,
+            textAlign: speakerData.profile?.align
+              ? speakerData.profile?.align.toLowerCase()
+              : 'left',
             letterSpacing: `${sessionData.profile?.letterSpacing || 0}px`,
           },
           org: {
@@ -42,6 +54,9 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
             color: speakerData.subject?.color || '#c4d6cd',
             fontSize: speakerData.subject?.fontSize || '1rem',
             fontFamily: speakerData.subject?.font || null,
+            textAlign: speakerData.subject?.align
+              ? speakerData.subject?.align.toLowerCase()
+              : 'left',
             letterSpacing: `${sessionData.subject?.letterSpacing || 0}px`,
           },
           photoUrl: speakerData.picture?.url
@@ -50,7 +65,7 @@ function mapStrapiProgramsToAppPrograms(strapiProgram): Program[] {
           detailUrl: speakerData.detailUrl || '',
           showDetail: speakerData.detail || false,
         })) || [],
-      defaultOpen: sessionIndex === 0,
+      defaultOpen: !!sessionData.defaultOpen,
     }))
     .filter(Boolean);
 }
