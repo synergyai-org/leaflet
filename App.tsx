@@ -25,7 +25,7 @@ const App: React.FC = () => {
   const getHospitalCodeFromUrl = (): string => {
     const hostname = window.location.hostname;
 
-    if (hostname === 'localhost') {
+    if (hostname === 'localhost' || hostname === 'leaflet-front.netlify.app') {
       return 'leaflet';
     }
 
