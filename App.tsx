@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { AppConfig, Speaker } from "./types";
-import { DEFAULT_CONFIG } from "./constants";
-import { loadConfigFromHospitalByCode } from "./services/strapiService";
-import { getDirectImageUrl } from "./utils/urlHelper";
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import ProgramList from "./components/ProgramList";
-import AdModal from "./components/AdModal";
-import Toast from "./components/Toast";
-import RenderStyled from "./components/common/RenderStyled";
+import React, { useCallback, useEffect, useState } from 'react';
+
+import AdModal from './components/AdModal';
+import Header from './components/Header';
+import Hero from './components/Hero';
+import ProgramList from './components/ProgramList';
+import Toast from './components/Toast';
+import RenderStyled from './components/common/RenderStyled';
+import { DEFAULT_CONFIG } from './constants';
+import { loadConfigFromHospitalByCode } from './services/strapiService';
+import { AppConfig, Speaker } from './types';
+import { getDirectImageUrl } from './utils/urlHelper';
 
 const App: React.FC = () => {
   const [config, setConfig] = useState<AppConfig>(DEFAULT_CONFIG);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{
     message: string;
-    type: "success" | "error";
+    type: 'success' | 'error';
   } | null>(null);
 
   const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null);
@@ -24,12 +25,12 @@ const App: React.FC = () => {
   const getHospitalCodeFromUrl = (): string => {
     const hostname = window.location.hostname;
 
-    if (hostname === "localhost") {
-      return "leaflet";
+    if (hostname === 'localhost') {
+      return 'leaflet';
     }
 
     // subdomain 추출 (cmcseoul.synergyai.co -> cmcseoul)
-    const subdomain = hostname.split(".")[0];
+    const subdomain = hostname.split('.')[0];
     return subdomain;
   };
 
@@ -44,20 +45,20 @@ const App: React.FC = () => {
     const root = document.documentElement;
     const accent = config.globalTheme.accentColor;
 
-    root.style.setProperty("--matte-black", config.globalTheme.bgColor);
-    root.style.setProperty("--dark-gold", accent);
-    root.style.setProperty("--light-gold", accent + "cc");
-    root.style.setProperty("--border-color", accent + "40");
-    root.style.setProperty("--glow-color", accent + "33");
+    root.style.setProperty('--matte-black', config.globalTheme.bgColor);
+    root.style.setProperty('--dark-gold', accent);
+    root.style.setProperty('--light-gold', accent + 'cc');
+    root.style.setProperty('--border-color', accent + '40');
+    root.style.setProperty('--glow-color', accent + '33');
 
     if (config.pageTitle) {
       document.title = config.pageTitle;
     }
 
     if (config.globalTheme.fontUrl) {
-      const link = document.createElement("link");
+      const link = document.createElement('link');
       link.href = config.globalTheme.fontUrl;
-      link.rel = "stylesheet";
+      link.rel = 'stylesheet';
       document.head.appendChild(link);
       return () => {
         try {
@@ -75,19 +76,19 @@ const App: React.FC = () => {
       const strapiConfig = await loadConfigFromHospitalByCode(hospitalCode);
       setConfig(strapiConfig);
 
-      console.log("✅ Successfully loaded hospital data:", strapiConfig);
+      console.log('✅ Successfully loaded hospital data:', strapiConfig);
     } catch (error) {
-      console.error("❌ Failed to load hospital data:", error);
+      console.error('❌ Failed to load hospital data:', error);
       setConfig(DEFAULT_CONFIG);
 
       const hospitalCode = getHospitalCodeFromUrl();
-      const isDefaultCode = hospitalCode === "leaflet";
+      const isDefaultCode = hospitalCode === 'leaflet';
 
       setToast({
         message: isDefaultCode
-          ? "데이터 로딩에 실패했습니다. 기본 설정을 사용합니다."
+          ? '데이터 로딩에 실패했습니다. 기본 설정을 사용합니다.'
           : `병원 코드 '${hospitalCode}'를 찾을 수 없습니다. 기본 설정을 사용합니다.`,
-        type: "error",
+        type: 'error',
       });
     } finally {
       if (!isSilent) setLoading(false);
@@ -99,14 +100,14 @@ const App: React.FC = () => {
 
     // URL 변경 시 데이터 다시 로드 (브라우저 뒤로가기, 앞으로가기 등)
     const handlePopState = () => {
-      console.log("🔄 URL changed, reloading data...");
+      console.log('🔄 URL changed, reloading data...');
       loadData();
     };
 
-    window.addEventListener("popstate", handlePopState);
+    window.addEventListener('popstate', handlePopState);
 
     return () => {
-      window.removeEventListener("popstate", handlePopState);
+      window.removeEventListener('popstate', handlePopState);
     };
   }, [loadData]);
 
@@ -116,7 +117,7 @@ const App: React.FC = () => {
     setShowAd(true);
   };
 
-  if (config.heroSection.title.text === "Loading") {
+  if (config.heroSection.title.text === 'Loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -198,7 +199,7 @@ const App: React.FC = () => {
           settings={config.adSettings}
           bgColor={config.globalTheme.bgColor}
           onComplete={() => {
-            window.open(selectedSpeaker?.detailUrl, "_blank");
+            window.open(selectedSpeaker?.detailUrl, '_blank');
             setShowAd(false);
           }}
           onCancel={() => setShowAd(false)}
