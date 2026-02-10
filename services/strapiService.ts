@@ -1,5 +1,8 @@
-const STRAPI_BASE_URL = process.env.STRAPI_API_URL || 'http://localhost:1337';
-const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
+import { API_URL as STRAPI_BASE_URL } from '../constants';
+
+const STRAPI_API_TOKEN =
+  process.env.STRAPI_API_TOKEN ||
+  'd4316e299dec567b45051f8d2d02d2550d5c68f1a8fcf21e8601686c34f7dc771e7d13c37cf7875661ce381de2a5115e9669215a52c2dd6e6c4bd7ded8eef34a6b8b2036708aa6497fe83bfb52344c9fafa51c080a75ad6b6fc1f6fb59f27cf6efa3f6346f26961de93598b12f56420a8d2d70002d32747acb80bbb275c6c093';
 
 export type TextComponent = {
   id: number;

@@ -8,13 +8,6 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3000,
       host: '0.0.0.0',
-      proxy: {
-        '/api': {
-          target: env.STRAPI_API_URL || 'http://localhost:1337',
-          changeOrigin: true,
-          secure: false,
-        },
-      },
     },
     plugins: [react()],
     define: {

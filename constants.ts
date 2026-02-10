@@ -1,6 +1,9 @@
 import { AppConfig } from './types';
 
-export const API_URL = process.env.STRAPI_API_URL || 'http://localhost:1337';
+// netlify에서 프로젝트 폴더 drop으로 배포시 환경변수를 지원하지 않으므로 API 주소를 여기에 하드코딩. (read only 키만 사용할 것)
+// 로컬 개발 시에는 .env.local 파일에 STRAPI_API_URL과 STRAPI_API_TOKEN을 설정해서 사용.
+export const API_URL =
+  process.env.STRAPI_API_URL || 'https://cms-leaflet.synergyai.co';
 
 export const DEFAULT_CONFIG: AppConfig = {
   globalTheme: {
